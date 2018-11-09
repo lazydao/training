@@ -43,10 +43,13 @@ q3 = [
 ]
 
 class sudoku():
+    
     q, p = [], []
+    
     def __init__(self, q):
         self.q = copy.deepcopy(q)
         self.p = [[list(range(1, 10)) for i in range(9)] for j in range(9)]
+    
     def update_p(self, i, j, n):
         if n<1 or n>9:
             print("数字超范围：{}".format(n))
@@ -62,63 +65,10 @@ class sudoku():
                 if n in self.p[x][j]:
                     self.p[x][j].remove(n)
         # 处理同一九宫格
-        if i<3:
-            if j<3:
-                for x in range(3):
-                    for y in range(3):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-            elif j>5:
-                for x in range(3):
-                    for y in range(6, 9):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-            else:
-                for x in range(3):
-                    for y in range(3, 6):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-        elif i>5:
-            if j<3:
-                for x in range(6, 9):
-                    for y in range(3):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-            elif j>5:
-                for x in range(6, 9):
-                    for y in range(6, 9):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-            else:
-                for x in range(6, 9):
-                    for y in range(3, 6):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-        else:
-            if j<3:
-                for x in range(3, 6):
-                    for y in range(3):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-            elif j>5:
-                for x in range(3, 6):
-                    for y in range(6, 9):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
-            else:
-                for x in range(3, 6):
-                    for y in range(3, 6):
-                        if x!=i and y!=j:
-                            if n in self.p[x][y]:
-                                self.p[x][y].remove(n)
+        for x in range(int(i/3)*3, int(i/3)*3+3):
+            for y in range(int(j/3)*3, int(j/3)*3+3):
+                if x!=i and y!=j and n in self.p[x][y]:
+                    self.p[x][y].remove(n)
         for x in range(9):
             for y in range(9):
                 if len(self.p[x][y])<1:
@@ -138,54 +88,10 @@ class sudoku():
         return True
 
     def check_p_patch(self, i, j, n):
-        if i<3:
-            if j<3:
-                for x in range(3):
-                    for y in range(3):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-            elif j>5:
-                for x in range(3):
-                    for y in range(6, 9):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-            else:
-                for x in range(3):
-                    for y in range(3, 6):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-        elif i>5:
-            if j<3:
-                for x in range(6, 9):
-                    for y in range(3):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-            elif j>5:
-                for x in range(6, 9):
-                    for y in range(6, 9):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-            else:
-                for x in range(6, 9):
-                    for y in range(3, 6):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-        else:
-            if j<3:
-                for x in range(3, 6):
-                    for y in range(3):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-            elif j>5:
-                for x in range(3, 6):
-                    for y in range(6, 9):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
-            else:
-                for x in range(3, 6):
-                    for y in range(3, 6):
-                        if (x!=i or y!=j) and n in self.p[x][y]:
-                            return False
+        for x in range(int(i/3)*3, int(i/3)*3+3):
+            for y in range(int(j/3)*3, int(j/3)*3+3):
+                if (x!=i or y!=j) and n in self.p[x][y]:
+                    return False
         return True
 
     def check_p(self, i, j, n):
@@ -211,14 +117,12 @@ class sudoku():
                 if len(self.p[i][j])==1:
                     if self.q[i][j]==0:
                         self.q[i][j] = self.p[i][j][0]
-                        # print("更新q: x-{}, y-{}, n-{}".format(i, j, self.p[i][j][0]))
                     elif self.q[i][j]!=self.p[i][j][0]:
                         return False
                 elif len(self.p[i][j]) > 1:
                     for p_data in self.p[i][j]:
                         if self.check_p(i, j, p_data):
                             self.q[i][j] = p_data
-                            # print("更新q: x-{}, y-{}, n-{}".format(i, j, p_data))
                             break
         return True
 
@@ -256,7 +160,6 @@ class sudoku():
             if not self.update_q():
                 return False
             c_after = self.count_q()
-            # print(c_after)
             if c_after == c_before:
                 break
         while not self.is_solved():
